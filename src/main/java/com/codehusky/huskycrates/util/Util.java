@@ -1,5 +1,6 @@
-package com.codehusky.huskycrates;
+package com.codehusky.huskycrates.util;
 
+import com.codehusky.huskycrates.HuskyCrates;
 import com.codehusky.huskycrates.crate.virtual.Key;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import org.spongepowered.api.Sponge;

@@ -1,7 +1,7 @@
 package com.codehusky.huskycrates.command;
 
 import com.codehusky.huskycrates.HuskyCrates;
-import com.codehusky.huskycrates.Util;
+import com.codehusky.huskycrates.util.Util;
 import com.codehusky.huskycrates.crate.virtual.Item;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;

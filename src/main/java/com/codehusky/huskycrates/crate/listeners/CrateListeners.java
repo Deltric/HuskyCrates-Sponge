@@ -1,7 +1,7 @@
 package com.codehusky.huskycrates.crate.listeners;
 
 import com.codehusky.huskycrates.HuskyCrates;
-import com.codehusky.huskycrates.Util;
+import com.codehusky.huskycrates.util.Util;
 import com.codehusky.huskycrates.crate.common.Checks;
 import com.codehusky.huskycrates.crate.physical.PhysicalCrate;
 import com.codehusky.huskycrates.crate.virtual.Crate;

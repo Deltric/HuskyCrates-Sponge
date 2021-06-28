@@ -8,6 +8,7 @@ import com.codehusky.huskycrates.crate.virtual.Key;
 import com.codehusky.huskycrates.crate.virtual.Slot;
 import com.codehusky.huskycrates.crate.virtual.effects.Effect;
 import com.codehusky.huskycrates.exception.DoubleRegistrationError;
+import com.codehusky.huskycrates.util.Util;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.entity.living.player.Player;

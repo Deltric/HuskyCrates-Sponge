@@ -7,6 +7,7 @@ import com.codehusky.huskycrates.crate.virtual.views.SimpleView;
 import com.codehusky.huskycrates.crate.virtual.views.SpinnerView;
 import com.codehusky.huskycrates.crate.virtual.views.ViewConfig;
 import com.codehusky.huskycrates.exception.*;
+import com.codehusky.huskycrates.util.Texts;
 import com.codehusky.huskyui.StateContainer;
 import com.codehusky.huskyui.states.Page;
 import com.codehusky.huskyui.states.element.Element;
@@ -37,6 +38,8 @@ import java.util.*;
 public class Crate {
     private String id;
     private String name;
+    private String previewTextOccurrence;
+    private String previewTextRewardCount;
 
     private Hologram hologram;
 
@@ -197,9 +200,11 @@ public class Crate {
         }
 
         this.previewable = node.getNode("previewable").getBoolean(false);
+        this.previewTextOccurrence=node.getNode("previewTextOccurrence").getString("&r&7Occurrence: ");
+        this.previewTextRewardCount=node.getNode("previewTextRewardCount").getString("&r&7Rewards: ");
         this.previewShowsRewardCount = node.getNode("previewShowsRewardCount").getBoolean(true);
     }
-    public Crate(String id, String name, Hologram hologram, Effect idleEffect, Effect rejectEffect, Effect winEffect, Effect openEffect, List<Slot> slots, boolean scrambleSlots, boolean free, boolean previewable, boolean previewRewardCount, long cooldownSeconds, boolean useLocalKey, Key localKey, HashMap<String, Integer> acceptedKeys, ViewType viewType, ViewConfig viewConfig){
+    public Crate(String id, String name, Hologram hologram, Effect idleEffect, Effect rejectEffect, Effect winEffect, Effect openEffect, List<Slot> slots, boolean scrambleSlots, boolean free, boolean previewable, boolean previewRewardCount, long cooldownSeconds, boolean useLocalKey, Key localKey, HashMap<String, Integer> acceptedKeys, ViewType viewType, ViewConfig viewConfig, String previewTextOccurrence, String previewTextRewardCount){
         this.id = id;
         this.name = name;
         this.hologram = hologram;
@@ -225,12 +230,14 @@ public class Crate {
         this.acceptedKeys = acceptedKeys;
         this.viewType = viewType;
         this.viewConfig = viewConfig;
+        this.previewTextOccurrence=previewTextOccurrence;
+        this.previewTextRewardCount=previewTextRewardCount;
     }
 
     public Crate getScrambledCrate() {
         ArrayList<Slot> newSlots = new ArrayList<>(slots);
         Collections.shuffle(newSlots);
-        return new Crate(id,name,hologram,idleEffect,rejectEffect,winEffect,openEffect,newSlots,scrambleSlots,free,previewable,previewShowsRewardCount,cooldownSeconds,useLocalKey,localKey,acceptedKeys,viewType,viewConfig);
+        return new Crate(id,name,hologram,idleEffect,rejectEffect,winEffect,openEffect,newSlots,scrambleSlots,free,previewable,previewShowsRewardCount,cooldownSeconds,useLocalKey,localKey,acceptedKeys,viewType,viewConfig,previewTextOccurrence,previewTextRewardCount);
     }
     public boolean isScrambled() {
         return this.scrambleSlots;
@@ -480,11 +487,11 @@ public class Crate {
             ItemStack orig = slots.get(j).getDisplayItem().toItemStack();
             List<Text> oldLore = orig.getOrElse(Keys.ITEM_LORE,new ArrayList<>());
             double val = ((double)slots.get(j).getChance()/(double)slotChanceMax)*100;
-            BigDecimal occurance = new BigDecimal(val).setScale(2,BigDecimal.ROUND_HALF_UP);
+            BigDecimal occurance = new BigDecimal(val).setScale(2, BigDecimal.ROUND_HALF_UP);
             if (previewShowsRewardCount) {
-                oldLore.add(Text.of(TextStyles.NONE,TextColors.GRAY,"Rewards: " + slots.get(j).getRewards().size()));
+                oldLore.add(Texts.of(previewTextRewardCount + slots.get(j).getRewards().size()));
             }
-                oldLore.add(Text.of(TextStyles.NONE,TextColors.GRAY,"Occurrence: " + ((val < 0.01)?"< 0.01":occurance.toString()) + "%"));
+            oldLore.add(Texts.of(previewTextOccurrence + ((val < 0.01)?"< 0.01":occurance.toString()) + "%"));
             builder.addElement(new Element(ItemStack.builder().from(orig).add(Keys.ITEM_LORE,oldLore).build()));
         }
         Page built = builder.build("preview");
