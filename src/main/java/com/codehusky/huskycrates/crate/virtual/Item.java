@@ -25,6 +25,7 @@ import java.util.*;
  * @see org.spongepowered.api.item.inventory.ItemStack
  */
 public class Item {
+
     private String name;
     private ItemType itemType;
     private List<String> lore;
@@ -33,6 +34,7 @@ public class Item {
     private Integer durability; // amount of durability left on tool, weapon, armor, etc.
 
     private List<Enchantment> enchantments;
+    private List<HideFlags> hideFlags;
     private Map nbt;
 
     public static Item fromItemStack(ItemStack stack){
@@ -44,6 +46,13 @@ public class Item {
                 lore.add(TextSerializers.FORMATTING_CODE.serialize(text));
             });
         }
+
+        List<HideFlags> hideFlags = new ArrayList<>();
+        for(HideFlags flag : HideFlags.values()) {
+            if(flag.hasFlag(stack))
+                hideFlags.add(flag);
+        }
+
         return new Item(
                 name,
                 stack.getType(),
@@ -52,11 +61,12 @@ public class Item {
                 stack.toContainer().getInt(DataQuery.of("UnsafeDamage")).orElse(null),
                 stack.get(Keys.ITEM_DURABILITY).orElse(null),
                 stack.get(Keys.ITEM_ENCHANTMENTS).orElse(null),
+                hideFlags,
                 stack.toContainer().getMap(DataQuery.of("UnsafeData")).orElse(null)
                 );
     }
     //TODO: builder pattern
-    public Item(String name, ItemType itemType, List<String> lore, Integer count, Integer damage, Integer durability, List<Enchantment> enchantments, Map nbt){
+    public Item(String name, ItemType itemType, List<String> lore, Integer count, Integer damage, Integer durability, List<Enchantment> enchantments, List<HideFlags> hideFlags, Map nbt){
         this.name = name;
         if(name != null && name.length() == 0) this.name = null;
         this.itemType = itemType;
@@ -65,6 +75,7 @@ public class Item {
         this.damage = damage;
         this.durability = durability;
         this.enchantments = enchantments;
+        this.hideFlags = hideFlags;
         this.nbt = nbt;
         if(this.nbt instanceof ImmutableMap){
             this.nbt = Maps.newHashMap(this.nbt);
@@ -116,6 +127,16 @@ public class Item {
             });
         }
 
+        this.hideFlags = new ArrayList<>();
+        if(!node.getNode("hideflags").isVirtual()){
+            try {
+                this.hideFlags = node.getNode("hideflags").getList(TypeToken.of(HideFlags.class));
+            } catch (ObjectMappingException e) {
+                e.printStackTrace();
+                throw new ConfigParseError("Invalid hide flags virtual specified! Reason is printed above.",node.getNode("hideflags").getPath());
+            }
+        }
+
         if(!node.getNode("nbt").isVirtual() && node.getNode("nbt").getValue() instanceof LinkedHashMap) {
             this.nbt = (LinkedHashMap) node.getNode("nbt").getValue();
         }
@@ -123,6 +144,12 @@ public class Item {
 
     public ItemStack toItemStack(){
         ItemStack stack = ItemStack.of(this.itemType, this.count);
+
+        if(hideFlags != null) {
+            for(HideFlags flag : hideFlags) {
+                flag.apply(stack);
+            }
+        }
 
         if(this.name != null){
             stack.offer(Keys.DISPLAY_NAME,TextSerializers.FORMATTING_CODE.deserialize(this.name));
