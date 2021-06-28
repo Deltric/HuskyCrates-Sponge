@@ -7,7 +7,6 @@ import com.codehusky.huskycrates.exception.ConfigError;
 import com.codehusky.huskycrates.exception.ConfigParseError;
 import com.codehusky.huskycrates.exception.InjectionDataError;
 import com.codehusky.huskycrates.exception.RewardDeliveryError;
-import com.sun.istack.internal.NotNull;
 import ninja.leaping.configurate.ConfigurationNode;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
@@ -77,7 +76,7 @@ public class Slot {
     }
 
     //TODO: builder pattern
-    public Slot(@NotNull Item displayItem, List<Reward> rewards, List<List<Reward>> rewardGroups, @NotNull Integer chance, Boolean pickRandom, Integer pickSize, Boolean pickUnique){
+    public Slot(Item displayItem, List<Reward> rewards, List<List<Reward>> rewardGroups, Integer chance, Boolean pickRandom, Integer pickSize, Boolean pickUnique){
         this.displayItem = displayItem;
         this.chance = chance;
 
@@ -211,7 +210,7 @@ public class Slot {
         }
 
         //TODO: builder pattern
-        public Reward(@NotNull Crate holder, @NotNull RewardType rewardType,  String rewardString, Item rewardItem, Item slotDisplayItem, Effect effect, Boolean effectOnPlayer, Integer keyCount){
+        public Reward(Crate holder, RewardType rewardType,  String rewardString, Item rewardItem, Item slotDisplayItem, Effect effect, Boolean effectOnPlayer, Integer keyCount){
             this.displayItem = slotDisplayItem;
             this.crateid = holder.getId();
             this.rewardType = rewardType;
